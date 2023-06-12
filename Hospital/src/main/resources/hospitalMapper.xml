@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.HospitalMapper">
+
+	<insert id="addDoctor">
+		<selectKey keyProperty="seq_doc" resultType="int"
+			order="BEFORE">
+			select seq_doc.nextval from dual
+		</selectKey>
+		insert into doctor(
+		seq_doc,
+		name,
+		phone,
+		dept,
+		post,
+		ssn
+		)
+		values(
+		#{seq_doc},
+		#{name},
+		#{phone},
+		#{dept},
+		#{post},
+		#{ssn}
+		)
+	</insert>
+
+	<select id="searchDoctorBySsn" resultType="doctor">
+		select * from doctor
+		where ssn = #{ssn}
+	</select>
+
+	<select id="searchDoctorBySeq" resultType="doctor">
+		select * from doctor
+		where seq_doc = #{seq_doc}
+	</select>
+
+	<select id="searchDoctorByName" resultType="doctor">
+		select * from doctor
+		where name like '%'||#{name}||'%'
+	</select>
+
+	<select id="searchDoctorByDept" resultType="doctor">
+		select * from doctor
+		where dept like '%'||#{dept}||'%'
+	</select>
+
+	<update id="updateDoctor" parameterType="doctor">
+		update doctor
+		<set>
+			name = #{name},
+			phone = #{phone},
+			dept = #{dept},
+			post = #{post}
+		</set>
+		where
+		seq_doc =#{seq_doc}
+	</update>
+
+	<insert id="addPatient">
+		<selectKey keyProperty="seq_pat" resultType="int"
+			order="BEFORE">
+			select seq_pat.nextval from dual
+		</selectKey>
+		insert into patient(
+		seq_pat,
+		name,
+		phone,
+		ssn
+		)
+		values(
+		#{seq_pat},
+		#{name},
+		#{phone},
+		#{ssn}
+		)
+	</insert>
+
+	<select id="searchPatientBySsn" resultType="patient">
+		select * from patient
+		where ssn = #{ssn}
+	</select>
+
+	<select id="searchPatientBySeq" resultType="patient">
+		select * from patient
+		where seq_pat = #{seq_pat}
+	</select>
+
+	<select id="searchPatientByName" resultType="patient">
+		select * from
+		patient where name like '%'||#{name}||'%'
+	</select>
+
+	<update id="updatePatient" parameterType="patient">
+		update patient
+		<set>
+			name = #{name},
+			phone = #{phone}
+		</set>
+		where
+		seq_pat =#{seq_pat}
+	</update>
+
+	<insert id="addSchedule" parameterType="schedule">
+		insert into schedule(
+		seq_doc,
+		year,
+		month
+		)
+		values(
+		#{seq_doc},
+		#{year},
+		#{month}
+		)
+	</insert>
+
+	<select id="searchSchedule" resultType="schedule">
+		select * from schedule
+		where seq_doc = #{seq_doc} and year = #{year} and month = #{month}
+	</select>
+
+	<update id="updateSchedule">
+		update schedule
+		<set>
+			d01 = #{d01}, d02 = #{d02}, d03 = #{d03}, d04 = #{d04}, d05 =
+			#{d05},
+			d06 = #{d06}, d07 = #{d07}, d08 = #{d08}, d09 = #{d09}, d10 =
+			#{d10},
+			d11 = #{d11}, d12 = #{d12}, d13 = #{d13}, d14 = #{d14}, d15 =
+			#{d15},
+			d16 = #{d16}, d17 = #{d17}, d18 = #{d18}, d19 = #{d19}, d20 =
+			#{d20},
+			d21 = #{d21}, d22 = #{d22}, d23 = #{d23}, d24 = #{d24}, d25 =
+			#{d25},
+			d26 = #{d26}, d27 = #{d27}, d28 = #{d28}, d29 = #{d29}, d30 =
+			#{d30},
+			d31 = #{d31}
+		</set>
+		where seq_doc = #{seq_doc} and year = #{year} and month = #{month}
+	</update>
+
+	<insert id="addReservation" parameterType="reservation">
+		<selectKey keyProperty="seq_res" resultType="int"
+			order="BEFORE">
+			select seq_res.nextval from dual
+		</selectKey>
+		insert into reservation(
+		seq_res,
+		seq_pat,
+		seq_doc,
+		time
+		)
+		values(
+		#{seq_res},
+		#{seq_pat},
+		#{seq_doc},
+		to_date(#{time},'YYYY-MM-DD HH24:MI')
+		)
+	</insert>
+
+	<select id="searchReservation" resultType="reservation">
+		select
+		seq_res,
+		seq_pat,
+		seq_doc,
+		to_char(time, 'YYYY-MM-DD HH24:MI') as time
+		from
+		reservation where seq_doc = #{seq_doc} and time = to_date(#{time},'YYYY-MM-DD
+		HH24:MI')
+	</select>
+
+	<select id="searchReservationByPat" resultType="reservation">
+		select
+		seq_res,
+		seq_pat,
+		seq_doc,
+		to_char(time, 'YYYY-MM-DD HH24:MI') as time
+		from
+		reservation where seq_pat = #{seq_pat} and time >= systimestamp
+		order by time
+	</select>
+
+	<delete id="deleteReservation">
+		delete from reservation where seq_doc = #{seq_doc}
+		and time = to_date(#{time},'YYYY-MM-DD HH24:MI')
+	</delete>
+
+</mapper>
